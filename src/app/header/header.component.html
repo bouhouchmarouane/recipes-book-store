@@ -5,11 +5,8 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav w-100">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Recipes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Shopping list</a>
+      <li *ngFor="let tab of eTabs | keyvalue" [ngClass]="selectedTab === tab.value ? 'active' : ''">
+        <a class="nav-link" href="#" (click)="goto(tab.value)">{{tab.value}}</a>
       </li>
       <li class="nav-item dropdown ml-auto">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
