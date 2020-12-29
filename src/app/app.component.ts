@@ -11,6 +11,6 @@ export class AppComponent {
   activeTab = Tabs.Recipes;
 
   onTabClick(selectedTab: string): void {
-    this.activeTab = selectedTab;
+    this.activeTab = (selectedTab as Tabs);
   }
 }

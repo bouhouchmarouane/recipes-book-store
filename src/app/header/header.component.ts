@@ -18,6 +18,6 @@ export class HeaderComponent implements OnInit {
 
   goto(tab: string): void {
     this.activeTab.emit(tab);
-    this.selectedTab = tab;
+    this.selectedTab = (tab as Tabs);
   }
 }
