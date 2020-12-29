@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {Tabs} from './tabs.enum';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'recipes-books-store';
+  eTabs = Tabs;
+  activeTab = Tabs.Recipes;
+
+  onTabClick(selectedTab: string): void {
+    this.activeTab = (selectedTab as Tabs);
+  }
 }

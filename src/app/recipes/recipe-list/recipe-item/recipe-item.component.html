@@ -1,1 +1,7 @@
-<p>recipe-item works!</p>
+<div class="card" style="width: 18rem; cursor: pointer;" (click)="gotoRecipe()">
+  <img class="card-img-top" [src]="recipe.imagePath" alt="{{recipe.name}}" height="100px" style="object-fit: cover;">
+  <div class="card-body">
+    <h5 class="card-title">{{recipe.name}}</h5>
+    <p class="card-text">{{recipe.description}}</p>
+  </div>
+</div>
