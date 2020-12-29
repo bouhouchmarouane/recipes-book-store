@@ -1,21 +1,21 @@
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-8">
     <div class="form-group">
       <label for="ingredientName">Name</label>
-      <input type="text" class="form-control" id="ingredientName">
+      <input type="text" class="form-control" id="ingredientName" #nameInput>
     </div>
   </div>
-  <div class="col-md-2">
+  <div class="col-md-4">
     <div class="form-group">
       <label for="ingredientAmount">Amount</label>
-      <input type="number" class="form-control" id="ingredientAmount">
+      <input type="number" class="form-control" id="ingredientAmount" #amountInput>
     </div>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-    <button class="btn btn-info">Add</button>
-    <button class="btn btn-danger">Delete</button>
-    <button class="btn btn-dark">Clear</button>
+  <div class="col-md-12">
+    <button type="button" class="btn btn-info mr-2" (click)="addIngredient(nameInput.value, amountInput.value)">Add</button>
+    <button type="button" class="btn btn-danger mr-2">Delete</button>
+    <button type="button" class="btn btn-secondary mr-2">Clear</button>
   </div>
 </div>
