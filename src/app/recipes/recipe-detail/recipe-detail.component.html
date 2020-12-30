@@ -5,6 +5,16 @@
       <div class="card-body">
         <h5 class="card-title">{{recipe.name}}</h5>
         <p class="card-text">{{recipe.description}}</p>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" appDropdown>
+            Menage recipe
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">To shopping list</a>
+            <a class="dropdown-item" href="#">Edit recipe</a>
+            <a class="dropdown-item" href="#">Delete recipe</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
