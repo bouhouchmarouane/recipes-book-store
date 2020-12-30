@@ -10,10 +10,18 @@
             Menage recipe
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">To shopping list</a>
+            <a class="dropdown-item" href="#" (click)="AddIngredientsToShjoppinglist(recipe.ingredients)">To shopping list</a>
             <a class="dropdown-item" href="#">Edit recipe</a>
             <a class="dropdown-item" href="#">Delete recipe</a>
           </div>
+        </div>
+        <div class="mt-5">
+          <h4>Ingredients : </h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let ingredient of recipe.ingredients">{{ingredient.name}}
+              <span class="badge badge-primary badge-pill">{{ingredient.amount}}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
