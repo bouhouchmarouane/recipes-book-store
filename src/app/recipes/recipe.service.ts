@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {Recipe} from '../recipes/recipe.model';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Recipe} from './recipe.model';
 
 export class RecipeService {
   private _recipes: Recipe[] = [
@@ -7,6 +7,8 @@ export class RecipeService {
     new Recipe('Test2', 'This is simply a test2', 'https://cookieandkate.com/images/2020/03/vegan-chana-masala-recipe-2-550x824.jpg'),
     new Recipe('Test3', 'This is simply a test3', 'https://www.cookwithmanali.com/wp-content/uploads/2014/08/Poha-Recipe.jpg')
   ];
+
+  selectedRecipe = new EventEmitter<Recipe>();
 
   get recipes(): Recipe[] {
     return this._recipes;
