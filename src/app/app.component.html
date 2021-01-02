@@ -1,9 +1,8 @@
-<app-header (activeTab)="onTabClick($event)"></app-header>
+<app-header></app-header>
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-12">
-      <app-recipes *ngIf="activeTab === eTabs.Recipes"></app-recipes>
-      <app-shopping-list  *ngIf="activeTab === eTabs.Shoppinglist"></app-shopping-list>
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>

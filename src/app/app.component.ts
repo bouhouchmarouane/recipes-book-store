@@ -7,10 +7,4 @@ import {Tabs} from './shared/tabs.enum';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  eTabs = Tabs;
-  activeTab = Tabs.Recipes;
-
-  onTabClick(selectedTab: string): void {
-    this.activeTab = (selectedTab as Tabs);
-  }
 }

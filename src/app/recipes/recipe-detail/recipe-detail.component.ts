@@ -9,15 +9,14 @@ import {Ingredient} from '../../shared/ingredient.model';
   styleUrls: ['./recipe-detail.component.css']
 })
 export class RecipeDetailComponent implements OnInit {
-  @Input() recipe: Recipe | undefined;
+  @Input() recipe: Recipe;
 
   constructor(private shoppingListService: ShoppingListService) { }
 
   ngOnInit(): void {
   }
 
-  AddIngredientsToShjoppinglist(ingredients: Ingredient[]): void {
-    console.log(ingredients);
+  AddIngredientsToShoppinglist(ingredients: Ingredient[]): void {
     ingredients.map((ingredient) =>
       this.shoppingListService.addIngredient(ingredient)
      );
