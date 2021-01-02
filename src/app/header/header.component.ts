@@ -7,17 +7,11 @@ import {Tabs} from '../shared/tabs.enum';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Output() activeTab = new EventEmitter<string>();
   eTabs = Tabs;
-  selectedTab = this.eTabs.Recipes;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  goto(tab: string): void {
-    this.activeTab.emit(tab);
-    this.selectedTab = (tab as Tabs);
-  }
 }
