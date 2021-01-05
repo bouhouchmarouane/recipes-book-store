@@ -20,7 +20,7 @@ export class RecipeDetailComponent implements OnInit {
 
   AddIngredientsToShoppinglist(ingredients: Ingredient[]): void {
     ingredients.map((ingredient) =>
-      this.shoppingListService.addIngredient(ingredient)
+      this.shoppingListService.addEditIngredient(ingredient)
      );
   }
 }

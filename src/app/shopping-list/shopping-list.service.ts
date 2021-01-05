@@ -30,11 +30,24 @@ export class ShoppingListService {
   addEditIngredient(ingredient: Ingredient): void {
     if (ingredient.id !== null) {
       const index = this.ingredients.indexOf(this.findIngredientById(ingredient.id));
-      this.ingredients[index] = ingredient;
+      if (index < 0) {
+        this.addIngredient(ingredient);
+      }
+      else{
+        this.editIngredient(ingredient, index);
+      }
     } else {
-      ingredient.id = this.nextId;
-      this._ingredients.push(ingredient);
+      this.addIngredient(ingredient);
     }
+  }
+
+  private editIngredient(ingredient: Ingredient, index: number): void {
+    this.ingredients[index] = ingredient;
+  }
+
+  private addIngredient(ingredient: Ingredient): void {
+    ingredient.id = this.nextId;
+    this._ingredients.push(ingredient);
   }
 
   get nextId(): number {
