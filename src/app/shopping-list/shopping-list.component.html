@@ -4,7 +4,10 @@
   </div>
   <div class="col-md-6">
     <ul class="list-group">
-      <li class="list-group-item" *ngFor="let ingredient of ingredients">{{ingredient.name}} ({{ingredient.amount}})</li>
+      <li class="list-group-item list-group-item-action"
+          *ngFor="let ingredient of ingredients"
+          [ngClass]="ingredient.id === editingIngId ? 'active': ''"
+          (click)="editIngredient(ingredient.id)" style="cursor: pointer">{{ingredient.name}} ({{ingredient.amount}})</li>
     </ul>
   </div>
 </div>

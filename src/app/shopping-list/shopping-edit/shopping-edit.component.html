@@ -1,4 +1,4 @@
-<form (ngSubmit)="onSubmit()" [formGroup]="ingredientForm">
+<form (ngSubmit)="addSaveIngredient()" [formGroup]="ingredientForm">
   <div class="row">
     <div class="col-md-8">
       <div class="form-group">
@@ -21,9 +21,9 @@
   </div>
   <div class="row">
     <div class="col-md-8">
-      <button type="button" class="btn btn-info mr-2" type="submit" [disabled]="!ingredientForm.valid">Add</button>
-      <button type="button" class="btn btn-danger mr-2">Delete</button>
-      <button type="button" class="btn btn-secondary mr-2" (click)="ingredientForm.reset()">Clear</button>
+      <button type="button" class="btn btn-info mr-2" type="submit" [disabled]="!ingredientForm.valid" [textContent]="editMode? 'save': 'Add'"></button>
+      <button type="button" class="btn btn-danger mr-2" [disabled]="!editMode" (click)="deleteIngredient()">Delete</button>
+      <button type="button" class="btn btn-secondary mr-2" (click)="resetForm()">Clear</button>
     </div>
   </div>
   <div class="row mt-2">
