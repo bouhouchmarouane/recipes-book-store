@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {RecipeService} from '../recipe.service';
 
@@ -17,11 +17,12 @@ export class RecipeEditComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.populateForm();
+    this.recipeForm.statusChanges.subscribe((value) => console.log(value));
   }
 
   private initForm(): void {
     this.recipeForm = new FormGroup({
-      name: new FormControl(null),
+      name: new FormControl(null, Validators.required),
       imagePath: new FormControl(null),
       description: new FormControl(null),
       ingredients: new FormArray([])
@@ -40,18 +41,35 @@ export class RecipeEditComponent implements OnInit {
       });
       for (const ingredient of recipe.ingredients){
         (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
-          name: new FormControl(ingredient.name),
-          amount: new FormControl(ingredient.amount)
+          name: new FormControl(ingredient.name, Validators.required),
+          amount: new FormControl(ingredient.amount, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
         }));
       }
     }
   }
 
   addSaveRecipe(): void {
+    console.log((this.recipeForm.get('ingredients') as FormArray).controls);
     console.log(this.recipeForm);
   }
 
   get ingredientsControl(): AbstractControl[] {
     return (this.recipeForm.get('ingredients') as FormArray).controls;
+  }
+
+  ingredientError(control: string, errorType: string): boolean {
+    return this.ingredientsControl.some((ingControl: AbstractControl) => {
+      return !ingControl.get(control)?.valid && ingControl.get(control)?.dirty
+        && ingControl.get(control)?.errors !== null
+        && ingControl.get(control)?.errors[errorType] !== undefined;
+    });
+  }
+
+  removeIngredient(i: number): void {
+    (this.recipeForm.get('ingredients') as FormArray).controls.splice(i, 1);
+  }
+
+  getInputValidationClass(control: AbstractControl): string {
+    return !control.valid && control.dirty ? 'is-invalid' : control.dirty ? 'is-valid' : '';
   }
 }

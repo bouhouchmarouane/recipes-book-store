@@ -36,8 +36,8 @@
         </div>
         <div class="text-danger" *ngIf="!ingredientForm.get('amount').valid && ingredientForm.get('amount').dirty">
           <div *ngIf="ingredientForm.get('amount').errors.required">Amount is required</div>
-          <div *ngIf="ingredientForm.get('amount').errors.pattern else min">Amount must be numeric</div>
-          <ng-template #min><div *ngIf="ingredientForm.get('amount').errors.min">Amount must be greated than 1</div></ng-template>
+          <div *ngIf="ingredientForm.get('amount').errors.pattern">Amount must be numeric</div>
+          <div *ngIf="ingredientForm.get('amount').errors.min">Amount must be greated than 1</div>
         </div>
     </div>
   </div>
