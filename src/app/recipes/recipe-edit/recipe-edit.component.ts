@@ -17,7 +17,6 @@ export class RecipeEditComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.populateForm();
-    this.recipeForm.statusChanges.subscribe((value) => console.log(value));
   }
 
   private initForm(): void {
@@ -65,11 +64,18 @@ export class RecipeEditComponent implements OnInit {
     });
   }
 
-  removeIngredient(i: number): void {
-    (this.recipeForm.get('ingredients') as FormArray).controls.splice(i, 1);
-  }
-
   getInputValidationClass(control: AbstractControl): string {
     return !control.valid && control.dirty ? 'is-invalid' : control.dirty ? 'is-valid' : '';
+  }
+
+  addIngredient(): void {
+    (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
+      name: new FormControl(null, Validators.required),
+      amount: new FormControl(null, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
+    }));
+  }
+
+  removeIngredient(i: number): void {
+    (this.recipeForm.get('ingredients') as FormArray).controls.splice(i, 1);
   }
 }

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row mb-10">
   <h3 [textContent]="editMode? 'Edit recipe': 'New recipe'"></h3>
   <div class="col-md-12 mt-2">
     <form (ngSubmit)="addSaveRecipe()" [formGroup]="recipeForm">
@@ -16,8 +16,8 @@
         <textarea class="form-control" id="description" formControlName="description" rows="4"></textarea>
         </div>
       </div>
-      <div formArrayName="ingredients">
-        <label *ngIf="ingredientsControl.length > 0">Ingredients</label>
+      <div *ngIf="ingredientsControl.length > 0 else noIngredients" formArrayName="ingredients" class="ingredients">
+        <label>Ingredients</label>
         <div class="form-group row" [formGroupName]="i" *ngFor="let ingredient of ingredientsControl; let i = index">
           <div class="col-md-8">
             <input type="text" class="form-control" formControlName="name" [ngClass]="getInputValidationClass(ingredientsControl[i].get('name'))">
@@ -31,8 +31,16 @@
             </button>
           </div>
         </div>
+        <div>
+          <button type="button" class="btn btn-success" (click)="addIngredient()"><i class="fa fa-plus"></i> Add ingredient</button>
+        </div>
       </div>
-      <div class="row">
+      <ng-template #noIngredients>
+        <div>
+          <button type="button" class="btn btn-success" (click)="addIngredient()"><i class="fa fa-plus"></i> Add ingredient</button>
+        </div>
+      </ng-template>
+      <div class="row mt-4">
         <div class="col-md-9">
           <div class="text-danger" *ngIf="ingredientsControl.length > 0">
             <div *ngIf="!recipeForm.get('name').valid && recipeForm.get('name').dirty">Recipe name is required</div>
@@ -42,12 +50,11 @@
             <div *ngIf="ingredientError('amount', 'min')">Ingredent amount must be greated than 1</div>
           </div>
         </div>
-        <div class="float-right mt-4 col-md-3">
+        <div class="col-md-3">
           <button class="btn btn-dark">Cancel</button>
-          <button class="btn btn-info ml-2">Save</button>
+          <button class="btn btn-info ml-2" [disabled]="!recipeForm.valid">Save</button>
         </div>
       </div>
-
     </form>
   </div>
 </div>
