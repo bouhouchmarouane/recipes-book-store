@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, UrlTree} from '@angular/router';
 import {RecipeService} from '../recipe.service';
-import {Recipe} from '../recipe.model';
+import {CanComponentDeactivate} from '../can-deactivate-recipe-guard.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit {
+export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   recipeForm: FormGroup;
   editMode = false;
 
@@ -90,5 +91,13 @@ export class RecipeEditComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['../'], {relativeTo: this.route});
+  }
+
+  canDeactivate(): (Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree) {
+    if (this.recipeForm.dirty) {
+      return confirm('Do you want to discard the changes ?');
+    } else {
+      return true;
+    }
   }
 }
