@@ -1,1 +1,67 @@
-<p>recipe-edit works!</p>
+<div class="row mb-10">
+  <h3 [textContent]="editMode? 'Edit recipe': 'New recipe'"></h3>
+  <div class="col-md-12 mt-2">
+    <form (ngSubmit)="addSaveRecipe()" [formGroup]="recipeForm">
+      <input type="hidden" formControlName="id">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" formControlName="name" [ngClass]="getInputValidationClass(recipeForm.get('name'))">
+      </div>
+      <div class="form-group">
+        <div class="card">
+          <div class="card-body">
+            <label class="card-title">Image path</label>
+            <input type="text" class="form-control" id="imagePath" formControlName="imagePath" #imagePath>
+          </div>
+          <img [src]="imagePath.value" [alt]="imagePath.value" *ngIf="imagePath.value" height="400px" style="object-fit: cover; width: 100%">
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" formControlName="description" rows="4"></textarea>
+        </div>
+      </div>
+      <div *ngIf="ingredientsControl.length > 0 else noIngredients" formArrayName="ingredients" class="ingredients">
+        <label>Ingredients</label>
+        <div class="form-group row" [formGroupName]="i" *ngFor="let ingredient of ingredientsControl; let i = index">
+          <input type="hidden" formControlName="id">
+          <div class="col-md-8">
+            <input type="text" class="form-control" formControlName="name" [ngClass]="getInputValidationClass(ingredientsControl[i].get('name'))">
+          </div>
+          <div class="col-md-3">
+            <input type="text" class="form-control" formControlName="amount" [ngClass]="getInputValidationClass(ingredientsControl[i].get('amount'))">
+          </div>
+          <div class="col-md-1">
+            <button type="button" class="btn btn-danger" (click)="removeIngredient(i)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div>
+          <button type="button" class="btn btn-success" (click)="addIngredient()"><i class="fa fa-plus"></i> Add ingredient</button>
+        </div>
+      </div>
+      <ng-template #noIngredients>
+        <div>
+          <button type="button" class="btn btn-success" (click)="addIngredient()"><i class="fa fa-plus"></i> Add ingredient</button>
+        </div>
+      </ng-template>
+      <div class="row mt-4">
+        <div class="col-md-9">
+          <div class="text-danger" *ngIf="ingredientsControl.length > 0">
+            <div *ngIf="!recipeForm.get('name').valid && recipeForm.get('name').dirty">Recipe name is required</div>
+            <div *ngIf="ingredientError('name', 'required')">Ingredient name is required</div>
+            <div *ngIf="ingredientError('amount', 'required')">Ingredent amount is required</div>
+            <div *ngIf="ingredientError('amount', 'pattern')">Ingredent amount must be numeric</div>
+            <div *ngIf="ingredientError('amount', 'min')">Ingredent amount must be greated than 1</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-dark" (click)="cancel()">Cancel</button>
+          <button class="btn btn-info ml-2" [disabled]="!recipeForm.valid">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

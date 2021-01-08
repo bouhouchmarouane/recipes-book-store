@@ -1,21 +1,44 @@
-<div class="row">
-  <div class="col-md-8">
-    <div class="form-group">
-      <label for="ingredientName">Name</label>
-      <input type="text" class="form-control" id="ingredientName" #nameInput>
+<form (ngSubmit)="addSaveIngredient()" [formGroup]="ingredientForm">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="form-group">
+        <label for="ingredientName">Name</label>
+        <input type="text" class="form-control" id="ingredientName" formControlName="name"
+               [ngClass]="!ingredientForm.get('name').valid
+                            && ingredientForm.get('name').dirty? 'is-invalid':
+                            ingredientForm.get('name').dirty ? 'is-valid' : ''">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="ingredientAmount">Amount</label>
+        <input type="text" class="form-control" id="ingredientAmount" formControlName="amount"
+               [ngClass]="!ingredientForm.get('amount').valid
+                            && ingredientForm.get('amount').dirty? 'is-invalid':
+                            ingredientForm.get('amount').dirty ? 'is-valid' : ''">
+      </div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="form-group">
-      <label for="ingredientAmount">Amount</label>
-      <input type="number" class="form-control" id="ingredientAmount" #amountInput>
+  <div class="row">
+    <div class="col-md-8">
+      <button type="button" class="btn btn-info mr-2" type="submit" [disabled]="!ingredientForm.valid" [textContent]="editMode? 'save': 'Add'"></button>
+      <button type="button" class="btn btn-danger mr-2" [disabled]="!editMode" (click)="deleteIngredient()">Delete</button>
+      <button type="button" class="btn btn-secondary mr-2" (click)="resetForm()">Clear</button>
     </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <button type="button" class="btn btn-info mr-2" (click)="addIngredient(nameInput.value, amountInput.value)">Add</button>
-    <button type="button" class="btn btn-danger mr-2">Delete</button>
-    <button type="button" class="btn btn-secondary mr-2">Clear</button>
+  <div class="row mt-2">
+    <div class="col-md-8">
+        <div *ngIf="!ingredientForm.get('name').valid
+                    && ingredientForm.get('name').dirty
+                    && ingredientForm.get('name').errors.required"
+                    class="text-danger">
+          Name is required
+        </div>
+        <div class="text-danger" *ngIf="!ingredientForm.get('amount').valid && ingredientForm.get('amount').dirty">
+          <div *ngIf="ingredientForm.get('amount').errors.required">Amount is required</div>
+          <div *ngIf="ingredientForm.get('amount').errors.pattern">Amount must be numeric</div>
+          <div *ngIf="ingredientForm.get('amount').errors.min">Amount must be greated than 1</div>
+        </div>
+    </div>
   </div>
-</div>
+</form>

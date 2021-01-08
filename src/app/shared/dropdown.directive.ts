@@ -12,7 +12,7 @@ export class DropdownDirective implements OnInit{
     this.status = false;
   }
 
-  @HostListener('click') mouseclick(eventData: Event) {
+  @HostListener('click') mouseclick(eventData: Event): void {
     this.status = ! this.status;
     const currentElement = this.elementRef.nativeElement;
     const nextElement = this.renderer.nextSibling(currentElement);
