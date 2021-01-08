@@ -4,6 +4,7 @@ import {ActivatedRoute, Router, UrlTree} from '@angular/router';
 import {RecipeService} from '../recipe.service';
 import {CanComponentDeactivate} from '../can-deactivate-recipe-guard.service';
 import {Observable} from 'rxjs';
+import {Recipe} from '../recipe.model';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -13,6 +14,8 @@ import {Observable} from 'rxjs';
 export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   recipeForm: FormGroup;
   editMode = false;
+  recipe: Recipe;
+  submitted = false;
 
   constructor(private recipeService: RecipeService, private route: ActivatedRoute, private router: Router) { }
 
@@ -35,14 +38,14 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
     const recipeId = +this.route.snapshot.params.id;
     this.editMode = !isNaN(recipeId);
     if (this.editMode) {
-      const recipe = this.recipeService.getRecipe(recipeId);
+      this.recipe = this.recipeService.getRecipe(recipeId);
       this.recipeForm.patchValue({
-        id: recipe.id,
-        name: recipe.name,
-        imagePath: recipe.imagePath,
-        description: recipe.description
+        id: this.recipe.id,
+        name: this.recipe.name,
+        imagePath: this.recipe.imagePath,
+        description: this.recipe.description
       });
-      for (const ingredient of recipe.ingredients){
+      for (const ingredient of this.recipe.ingredients){
         (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
           id: new FormControl(ingredient.id),
           name: new FormControl(ingredient.name, Validators.required),
@@ -53,6 +56,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   addSaveRecipe(): void {
+    this.submitted = true;
     const id = this.recipeService.addEditRecipe(this.recipeForm.value);
     if (this.editMode) {
       this.cancel();
@@ -94,7 +98,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): (Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree) {
-    if (this.recipeForm.dirty) {
+    if ((this.recipeForm.dirty || this.recipe.ingredients.length !== this.ingredientsControl.length) && !this.submitted) {
       return confirm('Do you want to discard the changes ?');
     } else {
       return true;
