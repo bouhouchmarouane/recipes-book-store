@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Recipe} from '../recipes/recipe.model';
 import {RecipeService} from '../recipes/recipe.service';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,8 @@ export class DataStorageService {
         return recipes.map(recipe => {
           return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
         });
+      }), tap(response => {
+        this.recipeService.setRecipes(response);
       }));
   }
 }

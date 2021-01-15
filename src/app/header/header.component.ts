@@ -28,7 +28,6 @@ export class HeaderComponent implements OnInit {
   fetchData(): void {
     this.showFetchDataSpinner = true;
     this.dataStorageService.getRecipes().subscribe(response => {
-      this.recipeService.setRecipes(response);
       this.showFetchDataSpinner = false;
     });
   }
