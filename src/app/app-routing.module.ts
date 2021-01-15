@@ -7,7 +7,7 @@ import {RecipeResolverService} from './recipes/recipe-detail/recipe-resolver.ser
 import {RecipeStartComponent} from './recipes/recipe-start/recipe-start.component';
 import {RecipeEditComponent} from './recipes/recipe-edit/recipe-edit.component';
 import {CanDeactivateRecipeGuardService} from './recipes/can-deactivate-recipe-guard.service';
-import {RecipesResolverService} from './recipes/recipe-detail/recipes-resolver.service';
+import {RecipesResolverService} from './recipes/recipes-resolver.service';
 
 const routes: Routes = [
   {path: '', redirectTo: '/recipes', pathMatch: 'full'},

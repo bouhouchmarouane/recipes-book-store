@@ -57,8 +57,10 @@ export class RecipeService {
   deleteRecipe(id: number): boolean {
     if (confirm('Are you sure to delete this recipe ?')) {
       const index = this.recipes.indexOf(this.getRecipe(id));
-      this.recipes.splice(index, 1);
-      return true;
+      if (index >= 0) {
+        this.recipes.splice(index, 1);
+        return true;
+      }
     }
     return false;
   }
