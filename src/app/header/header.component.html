@@ -9,10 +9,15 @@
         <a class="nav-link" [routerLink]="tab.key">{{tab.value}}</a>
       </li>
       <li class="nav-item dropdown ml-auto">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" appDropdown>Manage</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Save data</a>
-          <a class="dropdown-item" href="#">Fetch data</a>
+        <a class="nav-link dropdown-toggle clickable" id="navbarDropdownMenuLink"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" appDropdown>Manage</a>
+        <div class="dropdown-menu dropdown-menu-right clickable" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item clickable" (click)="saveData()">
+            Save data<i class="fa fa-circle-o-notch fa-spin float-right" *ngIf="showSaveDataSpinner"></i>
+          </a>
+          <a class="dropdown-item clickable" (click)="fetchData()">
+            Fetch data<i class="fa fa-circle-o-notch fa-spin float-right" *ngIf="showFetchDataSpinner"></i>
+          </a>
         </div>
       </li>
     </ul>

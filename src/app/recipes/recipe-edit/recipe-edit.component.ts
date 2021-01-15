@@ -65,14 +65,15 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  get ingredientsControl(): AbstractControl[] {
+  get ingredientsControls(): AbstractControl[] {
     return (this.recipeForm.get('ingredients') as FormArray).controls;
   }
 
   ingredientError(control: string, errorType: string): boolean {
-    return this.ingredientsControl.some((ingControl: AbstractControl) => {
+    return this.ingredientsControls.some((ingControl: AbstractControl) => {
       return !ingControl.get(control)?.valid && ingControl.get(control)?.dirty
         && ingControl.get(control)?.errors !== null
+        // @ts-ignore
         && ingControl.get(control)?.errors[errorType] !== undefined;
     });
   }
@@ -87,6 +88,8 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
       name: new FormControl(null, Validators.required),
       amount: new FormControl(null, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
     }));
+
+    // console.log((this.ingredientsControls[this.ingredientsControls.length - 1]?.get('name') as any).nativeElement);
   }
 
   removeIngredient(i: number): void {
@@ -98,7 +101,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): (Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree) {
-    if ((this.recipeForm.dirty || this.recipe.ingredients.length !== this.ingredientsControl.length) && !this.submitted) {
+    if ((this.recipeForm.dirty || this.recipe.ingredients.length !== this.ingredientsControls.length) && !this.submitted) {
       return confirm('Do you want to discard the changes ?');
     } else {
       return true;
