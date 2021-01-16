@@ -1,0 +1,17 @@
+import { Component, OnInit } from '@angular/core';
+import {FormGroup} from '@angular/forms';
+
+@Component({
+  selector: 'app-auth',
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.css']
+})
+export class AuthComponent implements OnInit {
+  myForm: FormGroup;
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}

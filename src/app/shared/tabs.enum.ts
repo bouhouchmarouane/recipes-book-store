@@ -1,4 +1,5 @@
 export enum Tabs {
   recipes = 'Recipes',
-  shoppinglist = 'Shopping list'
+  shoppinglist = 'Shopping list',
+  auth = 'Authenticate'
 }
