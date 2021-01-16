@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, NgForm} from '@angular/forms';
+import {AuthService} from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -7,11 +8,36 @@ import {FormGroup} from '@angular/forms';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  myForm: FormGroup;
+  isLogedIn = true;
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.isLogedIn = true;
   }
 
+  swithMode(): void {
+    this.isLogedIn = !this.isLogedIn;
+  }
+
+  submit(form: NgForm): void {
+    if (!form.valid){
+      return;
+    }
+    const email = form.value.email;
+    const password = form.value.password;
+
+    if (this.isLogedIn) {
+      console.log('loggedin');
+    } else {
+      this.authService.signup(email, password).subscribe(response => {
+        console.log(response);
+      }, error => {
+        console.log(error);
+      });
+      form.reset();
+    }
+
+
+  }
 }
