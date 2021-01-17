@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 
 interface AuthResponseData {
   idToken:	string;
@@ -24,6 +25,22 @@ export class AuthService {
         email,
         password,
         returnSecureToken: true
-      });
+      }).pipe(catchError(errorResponse => {
+        let errorMessage = 'An error occured';
+        if (errorResponse.error && errorResponse.error.error) {
+          switch (errorResponse.error.error.message) {
+            case 'EMAIL_EXISTS':
+              errorMessage = 'The email address is already in use by another account';
+              break;
+            case 'OPERATION_NOT_ALLOWED':
+              errorMessage = 'Password sign-in is disabled for this project';
+              break;
+            case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+              errorMessage = 'We have blocked all requests from this device due to unusual activity. Try again later';
+              break;
+          }
+        }
+        return throwError(errorMessage);
+    }));
   }
 }
