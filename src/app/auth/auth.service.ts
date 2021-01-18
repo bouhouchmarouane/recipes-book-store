@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import {Observable, Subject, throwError} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
+import {User} from './user.model';
 
 export interface AuthResponseData {
   idToken:	string;
@@ -19,6 +20,7 @@ export interface AuthResponseData {
 export class AuthService {
   private key = 'AIzaSyDgdKGWt6yvgTNomaXTKqtw54A8C9Kg6Ls';
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
+  user = new Subject<User>();
 
   constructor(private http: HttpClient) { }
 
@@ -28,7 +30,7 @@ export class AuthService {
         email,
         password,
         returnSecureToken: true
-      }).pipe(catchError(this.handleError));
+      }).pipe(catchError(this.handleError), tap(responseData => this.handleAuthentication(responseData)));
   }
 
   login(email: string, password: string): Observable<AuthResponseData> {
@@ -36,11 +38,17 @@ export class AuthService {
       email,
       password,
       returnSecureToken: true
-    }).pipe(catchError(this.handleError));
+    }).pipe(catchError(this.handleError), tap(responseData => this.handleAuthentication(responseData)));
+  }
+
+  private handleAuthentication(data: AuthResponseData): void {
+    const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
+    const user = new User(data.email, data.localId, data.idToken, expirationDate);
+    this.user.next(user);
   }
 
   private handleError(errorResponse: HttpErrorResponse): Observable<never>{
-    let errorMessage = 'An error occured';
+    let errorMessage = 'An error occurred';
     if (errorResponse.error && errorResponse.error.error) {
       switch (errorResponse.error.error.message) {
         case 'EMAIL_EXISTS':
