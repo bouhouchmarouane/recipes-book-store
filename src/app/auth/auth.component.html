@@ -13,8 +13,8 @@
         <input type="password" id="password" class="form-control" ngModel name="password" required minlength="6">
       </div>
       <div>
-        <button type="submit" class="btn btn-primary" [disabled]="!authForm.valid && !isLoading">{{isLogedIn ? 'Login' : 'Sign up'}}</button> |
-        <button type="button" class="btn btn-primary" (click)="swithMode()">Switch to {{isLogedIn ? 'sign up' : 'log in'}}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!authForm.valid && !isLoading">{{isLoggedIn ? 'Login' : 'Sign up'}}</button> |
+        <button type="button" class="btn btn-primary" (click)="switchMode()">Switch to {{isLoggedIn ? 'sign up' : 'log in'}}</button>
         <i class="fa fa-circle-o-notch fa-spin float-right" *ngIf="isLoading"></i>
       </div>
     </form>

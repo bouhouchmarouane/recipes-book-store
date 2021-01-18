@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormGroup, NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -9,18 +10,18 @@ import {Observable} from 'rxjs';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
-  isLogedIn = true;
+  isLoggedIn = true;
   isLoading = false;
   error: string | null = null;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.isLogedIn = true;
+    this.isLoggedIn = true;
   }
 
-  swithMode(): void {
-    this.isLogedIn = !this.isLogedIn;
+  switchMode(): void {
+    this.isLoggedIn = !this.isLoggedIn;
   }
 
   submit(form: NgForm): void {
@@ -31,12 +32,14 @@ export class AuthComponent implements OnInit {
     const password = form.value.password;
     let authObservable: Observable<AuthResponseData>;
 
-    authObservable = this.isLogedIn ? this.authService.login(email, password) : this.authService.signup(email, password);
+    authObservable = this.isLoggedIn ? this.authService.login(email, password) : this.authService.signup(email, password);
 
     this.isLoading = true;
     authObservable.subscribe(response => {
       console.log(response);
       this.isLoading = false;
+      this.router.navigate(['/recipes']);
+      console.log('navigate');
     }, errorMessage => {
       this.error = errorMessage;
       console.log(errorMessage);
