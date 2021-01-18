@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Observable, Subject, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {User} from './user.model';
 
@@ -20,7 +20,7 @@ export interface AuthResponseData {
 export class AuthService {
   private key = 'AIzaSyDgdKGWt6yvgTNomaXTKqtw54A8C9Kg6Ls';
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
-  user = new Subject<User>();
+  user = new BehaviorSubject<User | null>(null);
 
   constructor(private http: HttpClient) { }
 
@@ -45,6 +45,7 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
     const user = new User(data.email, data.localId, data.idToken, expirationDate);
     this.user.next(user);
+    console.log(user);
   }
 
   private handleError(errorResponse: HttpErrorResponse): Observable<never>{
