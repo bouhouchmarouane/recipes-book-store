@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {User} from './user.model';
+import {Router} from '@angular/router';
 
 export interface AuthResponseData {
   idToken:	string;
@@ -22,7 +23,7 @@ export class AuthService {
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
   user = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   signup(email: string, password: string): Observable<AuthResponseData> {
     return this.http.post<AuthResponseData>(this.url + ':signUp?key=' + this.key,
@@ -72,5 +73,10 @@ export class AuthService {
       }
     }
     return throwError(errorMessage);
+  }
+
+  logout(): void{
+    this.user.next(null);
+    this.router.navigate(['/auth']);
   }
 }
