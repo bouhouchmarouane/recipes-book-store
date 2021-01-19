@@ -5,9 +5,11 @@ export class User {
 
 
   get token(): string | null {
-    if (this._tokenExpirationDate || new Date() > this._tokenExpirationDate) {
+    if (this._tokenExpirationDate && new Date() > this._tokenExpirationDate) {
+      console.log('token', null);
       return null;
     }
+    console.log('token', this._token);
     return this._token;
   }
 

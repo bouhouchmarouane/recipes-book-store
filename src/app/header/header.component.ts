@@ -1,7 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Tabs} from '../shared/tabs.enum';
 import {DataStorageService} from '../shared/data-storage.service';
-import {RecipeService} from '../recipes/recipe.service';
 import {AuthService} from '../auth/auth.service';
 import {Subscription} from 'rxjs';
 
@@ -11,7 +9,6 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  eTabs = Tabs;
   showSaveDataSpinner = false;
   showFetchDataSpinner = false;
   private authSubscription: Subscription;

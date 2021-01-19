@@ -22,7 +22,7 @@ export class DataStorageService {
   getRecipes(): Observable<Recipe[]> {
     return this.authService.user.pipe(take(1), exhaustMap(user => {
       return this.http.get<Recipe[]>(this.url, {
-        params: new HttpParams().set('auth', user?.id ? user.id : '')
+        params: new HttpParams().set('auth', user?.token ? user.token : '')
       });
     }), map(recipes => {
       return recipes.map(recipe => {

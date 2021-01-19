@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {Tabs} from './shared/tabs.enum';
 
 @Component({
   selector: 'app-root',
