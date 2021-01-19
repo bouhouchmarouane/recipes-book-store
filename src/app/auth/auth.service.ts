@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {User} from './user.model';
 import {Router} from '@angular/router';
+import Timeout = NodeJS.Timeout;
 
 export interface AuthResponseData {
   idToken:	string;
@@ -22,6 +23,7 @@ export class AuthService {
   private key = 'AIzaSyDgdKGWt6yvgTNomaXTKqtw54A8C9Kg6Ls';
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
   user = new BehaviorSubject<User | null>(null);
+  autoLogoutTimer: Timeout;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -46,6 +48,7 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
     const user = new User(data.email, data.localId, data.idToken, expirationDate);
     this.user.next(user);
+    this.autoLogout(+data.expiresIn * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
@@ -95,11 +98,21 @@ export class AuthService {
 
     if (loadedUser.token) {
       this.user.next(loadedUser);
+      const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+      this.autoLogout(expirationDuration);
     }
   }
 
   logout(): void{
     this.user.next(null);
     this.router.navigate(['/auth']);
+    localStorage.removeItem('userData');
+    if (this.autoLogoutTimer) {
+      clearTimeout(this.autoLogoutTimer);
+    }
+  }
+
+  autoLogout(expirationDuration: number): void {
+    this.autoLogoutTimer = setTimeout(() => this.logout(), expirationDuration);
   }
 }
