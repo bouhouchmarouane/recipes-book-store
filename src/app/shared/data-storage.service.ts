@@ -19,7 +19,7 @@ export class DataStorageService {
     return this.http.put<[Recipe]>(this.url, recipes);
   }
 
-  getRecipes(): Observable<Recipe[]> {
+   getRecipes(): Observable<Recipe[]> {
       return this.http.get<Recipe[]>(this.url).pipe(map(recipes => {
         return recipes.map(recipe => {
           return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
