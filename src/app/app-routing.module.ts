@@ -8,10 +8,12 @@ import {RecipeStartComponent} from './recipes/recipe-start/recipe-start.componen
 import {RecipeEditComponent} from './recipes/recipe-edit/recipe-edit.component';
 import {CanDeactivateRecipeGuardService} from './recipes/can-deactivate-recipe-guard.service';
 import {RecipesResolverService} from './recipes/recipes-resolver.service';
+import {AuthComponent} from './auth/auth.component';
+import {AuthGuard} from './auth/auth.guard';
 
 const routes: Routes = [
   {path: '', redirectTo: '/recipes', pathMatch: 'full'},
-  {path: 'recipes', component: RecipesComponent, resolve: {recipes: RecipesResolverService}, children: [
+  {path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard], resolve: {recipes: RecipesResolverService}, children: [
       {path: '', component: RecipeStartComponent, pathMatch: 'full'},
       {path: 'new', component: RecipeEditComponent, canDeactivate: [CanDeactivateRecipeGuardService]},
       {path: ':id', component: RecipeDetailComponent,
@@ -20,7 +22,8 @@ const routes: Routes = [
         resolve: {recipe: RecipeResolverService},
         canDeactivate: [CanDeactivateRecipeGuardService]}
     ]},
-  {path: 'shoppinglist', component: ShoppingListComponent}
+  {path: 'shoppinglist', component: ShoppingListComponent},
+  {path: 'auth', component: AuthComponent}
 ];
 
 @NgModule({

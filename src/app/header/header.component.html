@@ -5,11 +5,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav w-100">
-      <li *ngFor="let tab of eTabs | keyvalue" routerLinkActive="active">
-        <a class="nav-link" [routerLink]="tab.key">{{tab.value}}</a>
-      </li>
-      <li class="nav-item dropdown ml-auto">
-        <a class="nav-link dropdown-toggle clickable" id="navbarDropdownMenuLink"
+      <li routerLinkActive="active" *ngIf="isAuthenticated" ><a class="nav-link" routerLink="recipes">Recipes</a></li>
+      <li routerLinkActive="active" ><a class="nav-link" routerLink="shoppinglist">Shopping list</a></li>
+      <li routerLinkActive="active" *ngIf="!isAuthenticated"><a class="nav-link" routerLink="auth">Authenticate</a></li>
+      <li class="nav-item dropdown ml-auto" *ngIf="isAuthenticated">
+        <a class="nav-link clickable" style="display: inline" (click)="logout()">Logout</a>
+        <a class="nav-link dropdown-toggle clickable" id="navbarDropdownMenuLink" style="display: inline"
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" appDropdown>Manage</a>
         <div class="dropdown-menu dropdown-menu-right clickable" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item clickable" (click)="saveData()">
