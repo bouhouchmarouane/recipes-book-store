@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2">
     <h1 class="mb-5">{{isLoggedIn ? 'Sign up' : 'Log in'}}</h1>
-    <app-alert [message]="error" title="Authentication error" *ngIf="error"></app-alert>
+    <app-alert [message]="error" title="Authentication error" *ngIf="error" (close)="error = null"></app-alert>
     <form #authForm="ngForm" (ngSubmit)="submit(authForm)">
       <div class="form-group">
         <label for="email">E-mail</label>
