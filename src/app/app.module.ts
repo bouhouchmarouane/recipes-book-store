@@ -14,13 +14,12 @@ import {AuthComponent} from './auth/auth.component';
 import {AuthInterceptorService} from './auth/auth-interceptor.service';
 import {AlertComponent} from './shared/alert/alert.component';
 import {RecipesModule} from './recipes/recipes.module';
+import {ShopingListModule} from './shopping-list/shoping-list.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    ShoppingListComponent,
-    ShoppingEditComponent,
     DropdownDirective,
     AuthComponent,
     AlertComponent
@@ -32,7 +31,8 @@ import {RecipesModule} from './recipes/recipes.module';
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
-    RecipesModule
+    RecipesModule,
+    ShopingListModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}],
   bootstrap: [AppComponent]
