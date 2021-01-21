@@ -89,6 +89,8 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
       amount: new FormControl(null, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
     }));
 
+    this.recipeForm.markAsDirty();
+
     // console.log((this.ingredientsControls[this.ingredientsControls.length - 1]?.get('name') as any).nativeElement);
   }
 
@@ -101,7 +103,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): (Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree) {
-    if ((this.recipeForm.dirty || this.recipe.ingredients.length !== this.ingredientsControls.length) && !this.submitted) {
+    if (this.recipeForm.dirty && !this.submitted) {
       return confirm('Do you want to discard the changes ?');
     } else {
       return true;
