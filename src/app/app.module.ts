@@ -7,7 +7,7 @@ import {HeaderComponent} from './header/header.component';
 import {HttpClientModule} from '@angular/common/http';
 import {CoreModule} from './core.module';
 import {SharedModule} from './shared/shared.module';
-import {RouterModule} from '@angular/router';
+import {AppRoutingModule} from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,15 +17,10 @@ import {RouterModule} from '@angular/router';
   imports: [
     BrowserModule,
     NgbModule,
+    AppRoutingModule,
     HttpClientModule,
     SharedModule,
-    CoreModule,
-    [RouterModule.forRoot([
-      {path: '', redirectTo: '/recipes', pathMatch: 'full'},
-      {path: 'recipes', loadChildren: () => import('./recipes/recipes.module').then(module => module.RecipesModule)},
-      {path: 'shoppinglist', loadChildren: () => import('./shopping-list/shoping-list.module').then(module => module.ShopingListModule)},
-      {path: 'auth', loadChildren: () => import('./auth/auth.module').then(module => module.AuthModule)}
-    ])]
+    CoreModule
   ],
   bootstrap: [AppComponent]
 })
