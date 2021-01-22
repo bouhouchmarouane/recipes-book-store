@@ -5,24 +5,19 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HeaderComponent} from './header/header.component';
-import {ShoppingListComponent} from './shopping-list/shopping-list.component';
-import {ShoppingEditComponent} from './shopping-list/shopping-edit/shopping-edit.component';
-import {DropdownDirective} from './shared/dropdown.directive';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HttpClientModule} from '@angular/common/http';
 import {AuthComponent} from './auth/auth.component';
-import {AuthInterceptorService} from './auth/auth-interceptor.service';
-import {AlertComponent} from './shared/alert/alert.component';
 import {RecipesModule} from './recipes/recipes.module';
 import {ShopingListModule} from './shopping-list/shoping-list.module';
+import {CoreModule} from './core.module';
+import {SharedModule} from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    DropdownDirective,
     AuthComponent,
-    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -32,9 +27,10 @@ import {ShopingListModule} from './shopping-list/shoping-list.module';
     HttpClientModule,
     FormsModule,
     RecipesModule,
-    ShopingListModule
+    ShopingListModule,
+    SharedModule,
+    CoreModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
