@@ -13,7 +13,7 @@ import {SharedModule} from '../shared/shared.module';
   imports: [
     ReactiveFormsModule,
     [RouterModule.forChild([
-      {path: 'shoppinglist', component: ShoppingListComponent}
+      {path: '', component: ShoppingListComponent}
     ])],
     SharedModule
   ],
