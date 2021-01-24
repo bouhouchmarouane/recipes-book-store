@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-xs-12 col-lg-6 col-md-8 offset-lg-3 offset-md-2">
+    <h1 class="mb-5">{{isLoggedIn ? 'Sign up' : 'Log in'}}</h1>
+    <app-alert [message]="error" title="Authentication error" *ngIf="error" (close)="error = null"></app-alert>
+    <form #authForm="ngForm" (ngSubmit)="submit(authForm)">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" class="form-control" ngModel name="email" email required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" class="form-control" ngModel name="password" required minlength="6">
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary" [disabled]="!authForm.valid && !isLoading">{{isLoggedIn ? 'Log in' : 'Sign up'}}</button> |
+        <button type="button" class="btn btn-primary" (click)="switchMode()">Switch to {{isLoggedIn ? 'sign up' : 'log in'}}</button>
+        <i class="fa fa-circle-o-notch fa-spin float-right" *ngIf="isLoading"></i>
+      </div>
+    </form>
+  </div>
+</div>

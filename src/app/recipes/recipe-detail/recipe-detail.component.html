@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card" style="width: 100%">
+      <img class="card-img-top" [src]="recipe?.imagePath" alt="{{recipe.name}}" height="400px" style="object-fit: cover;">
+      <div class="card-body">
+        <h5 class="card-title">{{recipe.name}}</h5>
+        <p class="card-text">{{recipe.description}}</p>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" appDropdown>
+            Menage recipe
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" (click)="AddIngredientsToShoppinglist(recipe.ingredients)">To shopping list</a>
+            <a class="dropdown-item" routerLink="edit">Edit recipe</a>
+            <a class="dropdown-item text-danger" (click)="deleteRecipe()">Delete recipe</a>
+          </div>
+        </div>
+        <div class="mt-5">
+          <h4>Ingredients : </h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let ingredient of recipe.ingredients">{{ingredient.name}}
+              <span class="badge badge-primary badge-pill">{{ingredient.amount}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

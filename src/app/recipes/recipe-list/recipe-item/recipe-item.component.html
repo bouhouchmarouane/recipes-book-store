@@ -1,0 +1,7 @@
+<div class="card mb-3" style="width: 18rem; cursor: pointer;" [routerLink]="recipe.id" routerLinkActive="text-white bg-info">
+  <img class="card-img-top" [src]="recipe.imagePath" alt="{{recipe.name}}" height="100px" style="object-fit: cover;">
+  <div class="card-body">
+    <h5 class="card-title">{{recipe.name}}</h5>
+    <p class="card-text">{{recipe.description}}</p>
+  </div>
+</div>
