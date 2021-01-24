@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable, Subject, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {User} from './user.model';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
 
 export interface AuthResponseData {
   idToken:	string;
@@ -19,7 +20,7 @@ export interface AuthResponseData {
   providedIn: 'root'
 })
 export class AuthService {
-  private key = 'AIzaSyDgdKGWt6yvgTNomaXTKqtw54A8C9Kg6Ls';
+  private key = environment.firebaseAPIKey;
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
   user = new BehaviorSubject<User | null>(null);
   autoLogoutTimer: any;
