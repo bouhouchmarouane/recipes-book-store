@@ -13,10 +13,20 @@ const initialState = {
 export function shoppingListReducer(state = initialState, action: any): { ingredients: Ingredient[] } {
   switch (action.type) {
     case ADD_INGREDIENT:
+      const ingredient = Object.assign({}, action.payload, {id: nextId(state)});
+      console.log(ingredient);
       return {
-        ...state, ingredients: [...state.ingredients, action.payload]
+        ...state, ingredients: [...state.ingredients, ingredient]
       };
     default:
       return state;
   }
+}
+
+function nextId(state: any): number {
+  // @ts-ignore
+  let maxId = Math.max.apply(Math, state.ingredients.map((ing: Ingredient) => {
+    return ing.id;
+  }));
+  return ++maxId;
 }

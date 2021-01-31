@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {Ingredient} from '../shared/ingredient.model';
 import {Subject} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {AddIngredient} from './store/shopping-list.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class ShoppingListService {
 
   editingIngredientSub = new Subject<number | null>();
 
-  constructor() { }
+  constructor(private store: Store<{shoppingList: {ingredients: Ingredient[]}}>) { }
 
   get ingredients(): Ingredient[] {
     return this._ingredients;
@@ -31,13 +33,15 @@ export class ShoppingListService {
     if (ingredient.id !== null) {
       const index = this.ingredients.indexOf(this.findIngredientById(ingredient.id));
       if (index < 0) {
-        this.addIngredient(ingredient);
+        // this.addIngredient(ingredient);
+        this.store.dispatch(new AddIngredient(ingredient));
       }
       else{
         this.editIngredient(ingredient, index);
       }
     } else {
-      this.addIngredient(ingredient);
+      // this.addIngredient(ingredient);
+      this.store.dispatch(new AddIngredient(ingredient));
     }
   }
 
