@@ -1,5 +1,5 @@
 import {Ingredient} from '../../shared/ingredient.model';
-import {ADD_INGREDIENT, ADD_INGREDIENTS} from './shopping-list.actions';
+import {ADD_INGREDIENT, ADD_INGREDIENTS, DELETE_INGREDIENTS, UPDATE_INGREDIENT} from './shopping-list.actions';
 
 const initialState = {
   ingredients: [
@@ -10,10 +10,10 @@ const initialState = {
 }
 
 export function shoppingListReducer(state = initialState, action: any): { ingredients: Ingredient[] } {
+  let ingredient: Ingredient;
   switch (action.type) {
     case ADD_INGREDIENT:
-      const ingredient = Object.assign({}, action.payload, {id: nextId(state)});
-      console.log(ingredient);
+      ingredient = Object.assign({}, action.payload, {id: nextId(state)});
       return {
         ...state, ingredients: [...state.ingredients, ingredient]
       };
@@ -21,6 +21,25 @@ export function shoppingListReducer(state = initialState, action: any): { ingred
       return {
         ...state, ingredients: [...state.ingredients, ...action.payload]
       }
+    case UPDATE_INGREDIENT:
+      ingredient = state.ingredients[action.payload.index];
+      const updatedIngredient = {
+        ...ingredient,
+        ...action.payload.ingredient
+      };
+      const updatedIngredients = [...state.ingredients]
+      updatedIngredients[action.payload.index] = updatedIngredient;
+      return {
+        ...state,
+        ingredients: updatedIngredients
+      }
+    case DELETE_INGREDIENTS:
+      return {
+        ...state,
+        ingredients: state.ingredients.filter(ing => {
+          return ing.id !== action.payload;
+        })
+      };
     default:
       return state;
   }
