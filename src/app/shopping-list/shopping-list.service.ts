@@ -3,6 +3,7 @@ import {Ingredient} from '../shared/ingredient.model';
 import {Subject} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AddIngredient, DeleteIngredients, UpdateIngredients} from './store/shopping-list.actions';
+import {AppState} from './store/shopping-list.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class ShoppingListService {
 
   editingIngredientSub = new Subject<number | null>();
 
-  constructor(private store: Store<{shoppingList: {ingredients: Ingredient[]}}>) { }
+  constructor(private store: Store<AppState>) { }
 
   get ingredients(): Ingredient[] {
     return this._ingredients;
