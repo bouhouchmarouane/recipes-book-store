@@ -40,11 +40,6 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
         this.editMode = false;
       }
     });
-    // this.editIngSub = this.shoppingListService.editingIngredientSub.subscribe(idIng => {
-    //     if (idIng !== null) {
-    //       this.editIngredient(idIng);
-    //   }
-    // });
   }
 
   addSaveIngredient(): void {
@@ -52,16 +47,6 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
     const amount = this.ingredientForm.get('amount')?.value;
     this.shoppingListService.addEditIngredient(new Ingredient(this.editMode ? this.idIngredient : null, name, amount as number));
     this.resetForm();
-  }
-
-  editIngredient(idIng: number): void {
-    this.idIngredient = idIng;
-    const ingredient = this.shoppingListService.findIngredientById(idIng);
-    this.ingredientForm.setValue({
-      name: ingredient.name,
-      amount: ingredient.amount
-    });
-    this.editMode = true;
   }
 
   ngOnDestroy(): void {
@@ -72,13 +57,12 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   resetForm(): void {
     this.ingredientForm.reset();
     this.editMode = false;
-    // this.shoppingListService.editingIngredientSub.next(null);
     this.store.dispatch(new StopEdit());
   }
 
   deleteIngredient(): void {
     if (confirm('Are you sure to delete this ingredient ? ')) {
-      this.shoppingListService.deleteIngredient(this.idIngredient);
+      this.shoppingListService.deleteIngredient();
     }
     this.resetForm();
   }

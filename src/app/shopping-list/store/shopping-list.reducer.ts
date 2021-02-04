@@ -35,23 +35,27 @@ export function shoppingListReducer(state: State = initialState, action: any): S
         ...state, ingredients: [...state.ingredients, ...action.payload]
       }
     case UPDATE_INGREDIENT:
-      ingredient = state.ingredients[action.payload.index];
+      ingredient = state.ingredients[state.editedIngredientId];
       const updatedIngredient = {
         ...ingredient,
-        ...action.payload.ingredient
+        ...action.payload
       };
       const updatedIngredients = [...state.ingredients]
-      updatedIngredients[action.payload.index] = updatedIngredient;
+      updatedIngredients[state.editedIngredientId] = updatedIngredient;
       return {
         ...state,
-        ingredients: updatedIngredients
+        ingredients: updatedIngredients,
+        editedIngredient: null,
+        editedIngredientId: -1
       }
     case DELETE_INGREDIENTS:
       return {
         ...state,
         ingredients: state.ingredients.filter(ing => {
-          return ing.id !== action.payload;
-        })
+          return ing.id !== state.editedIngredientId;
+        }),
+        editedIngredient: null,
+        editedIngredientId: -1
       };
     case START_EDIT:
       return {
@@ -60,11 +64,6 @@ export function shoppingListReducer(state: State = initialState, action: any): S
         editedIngredient: findIngredientById(state, action.payload)
       };
     case STOP_EDIT:
-      // console.log({
-      //   ...state,
-      //   editedIngredient: null,
-      //   editedIngredientId: -1
-      // });
       return {
         ...state,
         editedIngredient: null,
