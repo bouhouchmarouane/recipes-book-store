@@ -31,18 +31,10 @@ export class ShoppingListService {
   }
 
   addEditIngredient(ingredient: Ingredient): void {
-    if (ingredient.id !== null) {
-      const index = this.ingredients.indexOf(this.findIngredientById(ingredient.id));
-      if (index < 0) {
-        // this.addIngredient(ingredient);
-        this.store.dispatch(new AddIngredient(ingredient));
-      }
-      else{
-        // this.editIngredient(ingredient, index);
-        this.store.dispatch(new UpdateIngredients({ingredient, index}));
-      }
+    const index = ingredient.id;
+    if (index !== null) {
+      this.store.dispatch(new UpdateIngredients({ingredient, index}));
     } else {
-      // this.addIngredient(ingredient);
       this.store.dispatch(new AddIngredient(ingredient));
     }
   }

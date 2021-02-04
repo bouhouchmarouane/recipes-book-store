@@ -1,10 +1,11 @@
 import {Ingredient} from '../../shared/ingredient.model';
-import {ADD_INGREDIENT, ADD_INGREDIENTS, DELETE_INGREDIENTS, UPDATE_INGREDIENT} from './shopping-list.actions';
+import {ADD_INGREDIENT, ADD_INGREDIENTS, DELETE_INGREDIENTS, START_EDIT, STOP_EDIT, UPDATE_INGREDIENT} from './shopping-list.actions';
+import {createSelector} from '@ngrx/store';
 
 export interface State {
   ingredients: Ingredient[];
   editedIngredient: Ingredient | null;
-  editedIngredientIndex: number;
+  editedIngredientId: number;
 }
 
 export interface AppState {
@@ -18,7 +19,7 @@ const initialState: State = {
     new Ingredient(2, 'Cheese', 1),
   ],
   editedIngredient: null,
-  editedIngredientIndex: -1
+  editedIngredientId: -1
 }
 
 export function shoppingListReducer(state: State = initialState, action: any): State {
@@ -52,6 +53,23 @@ export function shoppingListReducer(state: State = initialState, action: any): S
           return ing.id !== action.payload;
         })
       };
+    case START_EDIT:
+      return {
+        ...state,
+        editedIngredientId: action.payload,
+        editedIngredient: findIngredientById(state, action.payload)
+      };
+    case STOP_EDIT:
+      // console.log({
+      //   ...state,
+      //   editedIngredient: null,
+      //   editedIngredientId: -1
+      // });
+      return {
+        ...state,
+        editedIngredient: null,
+        editedIngredientId: -1
+      };
     default:
       return state;
   }
@@ -63,4 +81,10 @@ function nextId(state: any): number {
     return ing.id;
   }));
   return ++maxId;
+}
+
+function findIngredientById(state: State, idIng: number): Ingredient {
+  return state.ingredients.find(ing => {
+    return ing.id === idIng;
+  }) as Ingredient;
 }
