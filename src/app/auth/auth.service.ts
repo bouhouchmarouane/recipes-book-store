@@ -5,6 +5,9 @@ import {catchError, tap} from 'rxjs/operators';
 import {User} from './user.model';
 import {Router} from '@angular/router';
 import {environment} from '../../environments/environment';
+import {Store} from '@ngrx/store';
+import {AppState} from '../store/app.reducer';
+import {Login, Logout} from './store/auth.actions';
 
 export interface AuthResponseData {
   idToken:	string;
@@ -25,7 +28,7 @@ export class AuthService {
   user = new BehaviorSubject<User | null>(null);
   autoLogoutTimer: any;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private store: Store<AppState>) { }
 
   signup(email: string, password: string): Observable<AuthResponseData> {
     return this.http.post<AuthResponseData>(this.url + ':signUp?key=' + this.key,
@@ -47,7 +50,12 @@ export class AuthService {
   private handleAuthentication(data: AuthResponseData): void {
     const expirationDate = new Date(new Date().getTime() + +data.expiresIn * 1000);
     const user = new User(data.email, data.localId, data.idToken, expirationDate);
-    this.user.next(user);
+    // this.user.next(user);
+    this.store.dispatch(new Login({
+      email: data.email,
+      id: data.localId,
+      token: data.idToken,
+      expirationDate}));
     this.autoLogout(+data.expiresIn * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }
@@ -97,14 +105,20 @@ export class AuthService {
     }
 
     if (loadedUser.token) {
-      this.user.next(loadedUser);
+      // this.user.next(loadedUser);
+      this.store.dispatch(new Login({
+        email: userData.email,
+        id: userData.id,
+        token: userData._token,
+        expirationDate: new Date(userData._tokenExpirationDate)}));
       const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
       this.autoLogout(expirationDuration);
     }
   }
 
   logout(): void{
-    this.user.next(null);
+    // this.user.next(null);
+    this.store.dispatch(new Logout());
     this.router.navigate(['/auth']);
     localStorage.removeItem('userData');
     if (this.autoLogoutTimer) {
