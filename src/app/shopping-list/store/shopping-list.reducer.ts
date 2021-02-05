@@ -1,6 +1,5 @@
 import {Ingredient} from '../../shared/ingredient.model';
 import {ADD_INGREDIENT, ADD_INGREDIENTS, DELETE_INGREDIENTS, START_EDIT, STOP_EDIT, UPDATE_INGREDIENT} from './shopping-list.actions';
-import {createSelector} from '@ngrx/store';
 
 export interface State {
   ingredients: Ingredient[];
@@ -31,23 +30,24 @@ export function shoppingListReducer(state: State = initialState, action: any): S
         ...state, ingredients: [...state.ingredients, ingredient]
       };
     case ADD_INGREDIENTS:
+      const ingredients = setIdsToIngredients(action.payload, nextId(state))
       return {
-        ...state, ingredients: [...state.ingredients, ...action.payload]
-      }
+        ...state, ingredients: [...state.ingredients, ...ingredients]
+      };
     case UPDATE_INGREDIENT:
       ingredient = state.ingredients[state.editedIngredientId];
       const updatedIngredient = {
         ...ingredient,
         ...action.payload
       };
-      const updatedIngredients = [...state.ingredients]
+      const updatedIngredients = [...state.ingredients];
       updatedIngredients[state.editedIngredientId] = updatedIngredient;
       return {
         ...state,
         ingredients: updatedIngredients,
         editedIngredient: null,
         editedIngredientId: -1
-      }
+      };
     case DELETE_INGREDIENTS:
       return {
         ...state,
@@ -74,7 +74,16 @@ export function shoppingListReducer(state: State = initialState, action: any): S
   }
 }
 
+const setIdsToIngredients = (ingredients: Ingredient[], id: number) => {
+  return ingredients.map(ingredient => {
+    const temp = Object.assign({}, ingredient);
+    temp.id = id++;
+    return temp;
+  });
+}
+
 function nextId(state: any): number {
+  console.log('nextId', state.ingredients);
   // @ts-ignore
   let maxId = Math.max.apply(Math, state.ingredients.map((ing: Ingredient) => {
     return ing.id;
