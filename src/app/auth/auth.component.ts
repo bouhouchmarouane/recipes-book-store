@@ -3,6 +3,9 @@ import {FormGroup, NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
+import {Store} from '@ngrx/store';
+import {AppState} from '../store/app.reducer';
+import {LoginStart} from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
@@ -14,10 +17,13 @@ export class AuthComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private store: Store<AppState>) { }
 
   ngOnInit(): void {
-    this.isLoggedIn = true;
+    this.store.select('auth').subscribe(authState => {
+      this.isLoading = authState.loading;
+      this.error = authState.authError;
+    });
   }
 
   switchMode(): void {
@@ -32,16 +38,25 @@ export class AuthComponent implements OnInit {
     const password = form.value.password;
     let authObservable: Observable<AuthResponseData>;
 
-    authObservable = this.isLoggedIn ? this.authService.login(email, password) : this.authService.signup(email, password);
+    if (this.isLoggedIn) {
+      this.store.dispatch(new LoginStart({email, password}))
+    }
+    else {
+      authObservable = this.authService.signup(email, password);
+    }
+
+    this.store.select('auth').subscribe(authState => {
+
+    })
 
     this.isLoading = true;
-    authObservable.subscribe(response => {
-      this.isLoading = false;
-      this.router.navigate(['/recipes']);
-    }, errorMessage => {
-      this.error = errorMessage;
-      this.isLoading = false;
-    });
-    form.reset();
+    // authObservable.subscribe(response => {
+    //   this.isLoading = false;
+    //   this.router.navigate(['/recipes']);
+    // }, errorMessage => {
+    //   this.error = errorMessage;
+    //   this.isLoading = false;
+    // });
+    // form.reset();
   }
 }
