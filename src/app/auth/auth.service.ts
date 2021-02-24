@@ -25,7 +25,7 @@ export interface AuthResponseData {
 export class AuthService {
   private key = environment.firebaseAPIKey;
   private url = 'https://identitytoolkit.googleapis.com/v1/accounts';
-  user = new BehaviorSubject<User | null>(null);
+  // user = new BehaviorSubject<User | null>(null);
   autoLogoutTimer: any;
 
   constructor(private http: HttpClient, private router: Router, private store: Store<AppState>) { }
