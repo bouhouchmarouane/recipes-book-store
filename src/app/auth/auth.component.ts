@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {AppState} from '../store/app.reducer';
-import {LoginStart} from './store/auth.actions';
+import {LoginStart, SignupStart} from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
@@ -36,27 +36,12 @@ export class AuthComponent implements OnInit {
     }
     const email = form.value.email;
     const password = form.value.password;
-    let authObservable: Observable<AuthResponseData>;
 
     if (this.isLoggedIn) {
-      this.store.dispatch(new LoginStart({email, password}))
+      this.store.dispatch(new LoginStart({email, password}));
     }
     else {
-      authObservable = this.authService.signup(email, password);
+      this.store.dispatch(new SignupStart({email, password}));
     }
-
-    this.store.select('auth').subscribe(authState => {
-
-    })
-
-    this.isLoading = true;
-    // authObservable.subscribe(response => {
-    //   this.isLoading = false;
-    //   this.router.navigate(['/recipes']);
-    // }, errorMessage => {
-    //   this.error = errorMessage;
-    //   this.isLoading = false;
-    // });
-    // form.reset();
   }
 }
