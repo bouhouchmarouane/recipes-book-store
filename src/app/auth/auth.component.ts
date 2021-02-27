@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormGroup, NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {AppState} from '../store/app.reducer';
@@ -12,15 +12,16 @@ import {LoginStart, SignupStart} from './store/auth.actions';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoggedIn = true;
   isLoading = false;
   error: string | null = null;
+  private storeSub: Subscription;
 
   constructor(private authService: AuthService, private router: Router, private store: Store<AppState>) { }
 
   ngOnInit(): void {
-    this.store.select('auth').subscribe(authState => {
+    this.storeSub = this.store.select('auth').subscribe(authState => {
       this.isLoading = authState.loading;
       this.error = authState.authError;
     });
@@ -42,6 +43,12 @@ export class AuthComponent implements OnInit {
     }
     else {
       this.store.dispatch(new SignupStart({email, password}));
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
     }
   }
 }

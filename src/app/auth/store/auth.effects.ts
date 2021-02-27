@@ -1,5 +1,5 @@
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Login, LOGIN_START, LOGIN_SUCCESS, LoginFail, LoginStart, SIGNUP_START, SignupStart} from './auth.actions';
+import {Login, LOGIN_START, LOGIN_SUCCESS, LoginFail, LoginStart, LOGOUT, SIGNUP_START, SignupStart} from './auth.actions';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
@@ -41,6 +41,12 @@ export class AuthEffects {
   authSuccess = this.actions$.pipe(
     ofType(LOGIN_SUCCESS),
     tap(() => this.router.navigate(['/']))
+  );
+
+  @Effect({dispatch: false})
+  authLogout = this.actions$.pipe(
+    ofType(LOGOUT),
+    tap(() => this.router.navigate(['/auth']))
   );
 
   @Effect()
