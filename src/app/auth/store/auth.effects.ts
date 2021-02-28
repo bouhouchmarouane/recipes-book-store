@@ -1,11 +1,12 @@
 import {Actions, Effect, ofType} from '@ngrx/effects';
-import {Login, LOGIN_START, LOGIN_SUCCESS, LoginFail, LoginStart, LOGOUT, SIGNUP_START, SignupStart} from './auth.actions';
+import {AUTO_LOGIN, Login, LOGIN_START, LOGIN_SUCCESS, LoginFail, LoginStart, LOGOUT, SIGNUP_START, SignupStart} from './auth.actions';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
+import {User} from '../user.model';
 
 export interface AuthResponseData {
   idToken:	string;
@@ -46,7 +47,10 @@ export class AuthEffects {
   @Effect({dispatch: false})
   authLogout = this.actions$.pipe(
     ofType(LOGOUT),
-    tap(() => this.router.navigate(['/auth']))
+    tap(() => {
+      localStorage.removeItem('userData');
+      this.router.navigate(['/auth']);
+    })
   );
 
   @Effect()
@@ -65,11 +69,46 @@ export class AuthEffects {
     })
   );
 
+  @Effect()
+  autoLogin = this.actions$.pipe(
+    ofType(AUTO_LOGIN),
+    map(() => {
+      let userData: {
+        email: string;
+        id: string;
+        _token: string;
+        _tokenExpirationDate: string;
+      };
+      let loadedUser;
+
+      if (!localStorage.getItem('userData')) {
+        return {type: 'DUMMY'};
+      }
+      else {
+        userData = JSON.parse(localStorage.getItem('userData') as string);
+        loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
+      }
+
+      if (loadedUser.token) {
+        // this.user.next(loadedUser);
+        return new Login({
+          email: userData.email,
+          id: userData.id,
+          token: userData._token,
+          expirationDate: new Date(userData._tokenExpirationDate)});
+        // const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+        // this.autoLogout(expirationDuration);
+      }
+      return {type: 'DUMMY'};
+    })
+  );
   constructor(private actions$: Actions, private http: HttpClient, private router: Router) {}
 }
 
 const handleAuthentication = (resposeData: AuthResponseData) => {
   const expirationDate = new Date(new Date().getTime() + +resposeData.expiresIn * 1000);
+  const user = new User(resposeData.email, resposeData.localId, resposeData.idToken, expirationDate);
+  localStorage.setItem('userData', JSON.stringify(user));
   return new Login({
     email: resposeData.email,
     id: resposeData.localId,
