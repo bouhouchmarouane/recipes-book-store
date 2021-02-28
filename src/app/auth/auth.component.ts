@@ -1,8 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormGroup, NgForm} from '@angular/forms';
-import {AuthResponseData, AuthService} from './auth.service';
-import {Observable, Subscription} from 'rxjs';
-import {Router} from '@angular/router';
+import {NgForm} from '@angular/forms';
+import {Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from '../store/app.reducer';
 import {LoginStart, SignupStart} from './store/auth.actions';
@@ -18,7 +16,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   error: string | null = null;
   private storeSub: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.storeSub = this.store.select('auth').subscribe(authState => {
