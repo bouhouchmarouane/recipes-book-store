@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Recipe} from '../recipes/recipe.model';
 import {RecipeService} from '../recipes/recipe.service';
 import {Observable} from 'rxjs';
-import {exhaustMap, map, take, tap} from 'rxjs/operators';
-import {AuthService} from '../auth/auth.service';
+import {map, tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {AppState} from '../store/app.reducer';
+import {SetRecipes} from '../recipes/store/recipe.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ import {AuthService} from '../auth/auth.service';
 export class DataStorageService {
   url = 'https://ng-recipe-book-d2828-default-rtdb.firebaseio.com/recipes.json';
 
-  constructor(private http: HttpClient, private recipeService: RecipeService, private authService: AuthService) {}
+  constructor(private http: HttpClient, private recipeService: RecipeService, private store: Store<AppState>) {}
 
   storeRecipes(): Observable<[Recipe]> {
     const recipes = this.recipeService.recipes;
@@ -25,7 +27,7 @@ export class DataStorageService {
           return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
         });
       }), tap(response => {
-        this.recipeService.setRecipes(response);
+        this.store.dispatch(new SetRecipes(response));
       }));
   }
 }
