@@ -7,12 +7,13 @@ import {of} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {User} from '../user.model';
+import {AuthService} from '../auth.service';
 
 export interface AuthResponseData {
   idToken:	string;
   email:	string;
   refreshToken: string;
-  expiresIn: string	;
+  expiresIn: string;
   localId: string;
   registered?: boolean;
 }
@@ -30,8 +31,10 @@ export class AuthEffects {
         email: authData.payload.email,
         password: authData.payload.password,
         returnSecureToken: true
-      }).pipe(map((resposeData: AuthResponseData) => {
-        return handleAuthentication(resposeData);
+      }).pipe(tap((responseData: AuthResponseData) => {
+        this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+      }), map((responseData: AuthResponseData) => {
+        return handleAuthentication(responseData);
       }), catchError((errorResponse: HttpErrorResponse) => {
         return handleError(errorResponse);
       }));
@@ -50,6 +53,7 @@ export class AuthEffects {
     tap(() => {
       localStorage.removeItem('userData');
       this.router.navigate(['/auth']);
+      this.authService.clearLogoutTimer();
     })
   );
 
@@ -61,7 +65,9 @@ export class AuthEffects {
         email: signupAction.payload.email,
         password: signupAction.payload.password,
         returnSecureToken: true
-      }).pipe(map((resposeData: AuthResponseData) => {
+      }).pipe(tap((responseData: AuthResponseData) => {
+        this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+      }), map((resposeData: AuthResponseData) => {
         return handleAuthentication(resposeData);
       }), catchError((errorResponse: HttpErrorResponse) => {
         return handleError(errorResponse);
@@ -90,7 +96,8 @@ export class AuthEffects {
       }
 
       if (loadedUser.token) {
-        // this.user.next(loadedUser);
+        const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+        this.authService.setLogoutTimer(expirationDuration * 1000);
         return new Login({
           email: userData.email,
           id: userData.id,
@@ -102,7 +109,7 @@ export class AuthEffects {
       return {type: 'DUMMY'};
     })
   );
-  constructor(private actions$: Actions, private http: HttpClient, private router: Router) {}
+  constructor(private actions$: Actions, private http: HttpClient, private router: Router, private authService: AuthService) {}
 }
 
 const handleAuthentication = (resposeData: AuthResponseData) => {
