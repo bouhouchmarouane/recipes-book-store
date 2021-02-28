@@ -3,8 +3,8 @@ import {Ingredient} from '../../shared/ingredient.model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
-import * as shoppingListReducer from '../store/shopping-list.reducer';
 import {AddIngredient, DeleteIngredients, StopEdit, UpdateIngredients} from '../store/shopping-list.actions';
+import {AppState} from '../../store/app.reducer';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -17,7 +17,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editMode = false;
   idIngredient: number;
 
-  constructor(private store: Store<shoppingListReducer.AppState>) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.ingredientForm = new FormGroup({

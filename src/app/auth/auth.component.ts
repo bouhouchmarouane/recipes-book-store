@@ -1,23 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import {FormGroup, NgForm} from '@angular/forms';
-import {AuthResponseData, AuthService} from './auth.service';
-import {Observable} from 'rxjs';
-import {Router} from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {AppState} from '../store/app.reducer';
+import {LoginStart, SignupStart} from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoggedIn = true;
   isLoading = false;
   error: string | null = null;
+  private storeSub: Subscription;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
-    this.isLoggedIn = true;
+    this.storeSub = this.store.select('auth').subscribe(authState => {
+      this.isLoading = authState.loading;
+      this.error = authState.authError;
+    });
   }
 
   switchMode(): void {
@@ -30,18 +35,18 @@ export class AuthComponent implements OnInit {
     }
     const email = form.value.email;
     const password = form.value.password;
-    let authObservable: Observable<AuthResponseData>;
 
-    authObservable = this.isLoggedIn ? this.authService.login(email, password) : this.authService.signup(email, password);
+    if (this.isLoggedIn) {
+      this.store.dispatch(new LoginStart({email, password}));
+    }
+    else {
+      this.store.dispatch(new SignupStart({email, password}));
+    }
+  }
 
-    this.isLoading = true;
-    authObservable.subscribe(response => {
-      this.isLoading = false;
-      this.router.navigate(['/recipes']);
-    }, errorMessage => {
-      this.error = errorMessage;
-      this.isLoading = false;
-    });
-    form.reset();
+  ngOnDestroy(): void {
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
+    }
   }
 }
