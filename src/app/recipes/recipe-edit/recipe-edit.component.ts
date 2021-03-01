@@ -5,6 +5,9 @@ import {RecipeService} from '../recipe.service';
 import {CanComponentDeactivate} from '../can-deactivate-recipe-guard.service';
 import {Observable} from 'rxjs';
 import {Recipe} from '../recipe.model';
+import {AppState} from '../../store/app.reducer';
+import {Store} from '@ngrx/store';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -14,10 +17,12 @@ import {Recipe} from '../recipe.model';
 export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
   recipeForm: FormGroup;
   editMode = false;
-  recipe: Recipe;
   submitted = false;
 
-  constructor(private recipeService: RecipeService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private recipeService: RecipeService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -38,20 +43,25 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
     const recipeId = +this.route.snapshot.params.id;
     this.editMode = !isNaN(recipeId);
     if (this.editMode) {
-      this.recipe = this.recipeService.getRecipe(recipeId);
-      this.recipeForm.patchValue({
-        id: this.recipe.id,
-        name: this.recipe.name,
-        imagePath: this.recipe.imagePath,
-        description: this.recipe.description
+      this.store.select('recipes').pipe(map(recipesState => {
+        return recipesState.recipes.find(recipe => recipe.id === recipeId);
+      })).subscribe(recipe => {
+        if (recipe) {
+          this.recipeForm.patchValue({
+            id: recipe.id,
+            name: recipe.name,
+            imagePath: recipe.imagePath,
+            description: recipe.description
+          });
+          for (const ingredient of recipe.ingredients){
+            (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
+              id: new FormControl(ingredient.id),
+              name: new FormControl(ingredient.name, Validators.required),
+              amount: new FormControl(ingredient.amount, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
+            }));
+          }
+        }
       });
-      for (const ingredient of this.recipe.ingredients){
-        (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
-          id: new FormControl(ingredient.id),
-          name: new FormControl(ingredient.name, Validators.required),
-          amount: new FormControl(ingredient.amount, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
-        }));
-      }
     }
   }
 

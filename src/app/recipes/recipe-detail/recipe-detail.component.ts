@@ -18,7 +18,7 @@ export class RecipeDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private recipeService: RecipeService,
               private router: Router,
-              private shoppingListStore: Store<AppState>) { }
+              private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.route.data.subscribe((data: Data) => {
@@ -27,7 +27,7 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   AddIngredientsToShoppinglist(ingredients: Ingredient[]): void {
-    this.shoppingListStore.dispatch(new AddIngredients(ingredients));
+    this.store.dispatch(new AddIngredients(ingredients));
   }
 
   deleteRecipe(): void {
