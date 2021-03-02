@@ -26,7 +26,6 @@ export class RecipeService {
       if (index < 0) {
         id = this.addRecipe(recipe);
       } else {
-        console.log(recipe);
         this.editRecipe(recipe, index);
         id = recipe.id;
       }

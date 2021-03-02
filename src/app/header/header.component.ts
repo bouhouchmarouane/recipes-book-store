@@ -4,8 +4,10 @@ import {AuthService} from '../auth/auth.service';
 import {Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {AppState} from '../store/app.reducer';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {Logout} from '../auth/store/auth.actions';
+import {FetchRecipes, SET_RECIPES} from '../recipes/store/recipe.actions';
+import {Actions, ofType} from '@ngrx/effects';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +20,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private authSubscription: Subscription;
   isAuthenticated = false;
 
-  constructor(private dataStorageService: DataStorageService, private authService: AuthService, private store: Store<AppState>) { }
+  constructor(private dataStorageService: DataStorageService,
+              private authService: AuthService,
+              private store: Store<AppState>,
+              private actions$: Actions) { }
 
   ngOnInit(): void {
     this.authSubscription = this.store.select('auth').pipe(map(authState => authState.user)).subscribe(user => {
@@ -35,9 +40,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   fetchData(): void {
     this.showFetchDataSpinner = true;
-    this.dataStorageService.getRecipes().subscribe(response => {
-      this.showFetchDataSpinner = false;
-    });
+    this.store.dispatch(new FetchRecipes());
+    this.actions$.pipe(ofType(SET_RECIPES), take(1)).subscribe(() => this.showFetchDataSpinner = false);
   }
 
   ngOnDestroy(): void {

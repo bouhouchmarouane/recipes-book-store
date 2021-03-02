@@ -97,14 +97,12 @@ export class AuthEffects {
 
       if (loadedUser.token) {
         const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        this.authService.setLogoutTimer(expirationDuration * 1000);
+        this.authService.setLogoutTimer(expirationDuration);
         return new Login({
           email: userData.email,
           id: userData.id,
           token: userData._token,
           expirationDate: new Date(userData._tokenExpirationDate)});
-        // const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        // this.autoLogout(expirationDuration);
       }
       return {type: 'DUMMY'};
     })
