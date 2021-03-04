@@ -1,23 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, UrlTree} from '@angular/router';
 import {RecipeService} from '../recipe.service';
 import {CanComponentDeactivate} from '../can-deactivate-recipe-guard.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Recipe} from '../recipe.model';
 import {AppState} from '../../store/app.reducer';
 import {Store} from '@ngrx/store';
 import {map} from 'rxjs/operators';
+import {AddRecipe, UpdateRecipe} from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: './recipe-edit.component.html',
   styleUrls: ['./recipe-edit.component.css']
 })
-export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
+export class RecipeEditComponent implements OnInit, CanComponentDeactivate, OnDestroy {
   recipeForm: FormGroup;
   editMode = false;
   submitted = false;
+  private populateFormSub: Subscription;
 
   constructor(private recipeService: RecipeService,
               private route: ActivatedRoute,
@@ -43,7 +45,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
     const recipeId = +this.route.snapshot.params.id;
     this.editMode = !isNaN(recipeId);
     if (this.editMode) {
-      this.store.select('recipes').pipe(map(recipesState => {
+      this.populateFormSub = this.store.select('recipes').pipe(map(recipesState => {
         return recipesState.recipes.find(recipe => recipe.id === recipeId);
       })).subscribe(recipe => {
         if (recipe) {
@@ -67,11 +69,19 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
 
   addSaveRecipe(): void {
     this.submitted = true;
-    const id = this.recipeService.addEditRecipe(this.recipeForm.value);
-    if (this.editMode) {
+    if (this.recipeForm.value.id === null) {
+      let id: number;
+      this.store.dispatch(new AddRecipe(this.recipeForm.value));
+      this.store.select('recipes').pipe(map(recipesState => {
+        return recipesState.recipes;
+      })).subscribe(rcps => {
+        Math.max.apply(Math, rcps.map((recipe: Recipe) => id = recipe.id));
+        this.router.navigate(['../', id], {relativeTo: this.route});
+      });
+    }
+    else {
+      this.store.dispatch(new UpdateRecipe(this.recipeForm.value));
       this.cancel();
-    } else {
-      this.router.navigate(['../', id], {relativeTo: this.route});
     }
   }
 
@@ -117,6 +127,12 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate {
       return confirm('Do you want to discard the changes ?');
     } else {
       return true;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.populateFormSub) {
+      this.populateFormSub.unsubscribe();
     }
   }
 }

@@ -16,26 +16,10 @@ export class RecipeResolverService implements Resolve<Recipe> {
   constructor(private dataStorageService: DataStorageService, private store: Store<AppState>) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Recipe> | Promise<Recipe> | Recipe {
-    let recipes: Recipe[];
-    this.store.select('recipes').pipe(map(recipesState => {
-      return recipesState.recipes;
-    })).subscribe(rcps => recipes = rcps);
-
-    let recipe = this.getRecipe(+route.params.id);
-
-    // @ts-ignore
-    if (recipes.length === 0) {
-      this.dataStorageService.getRecipes().subscribe(() => recipe = this.getRecipe(+route.params.id));
-    }
-    // @ts-ignore
-    return recipe;
-  }
-
-  getRecipe(id: number): Recipe {
     let recipe;
     this.store.select('recipes').pipe(map(recipesState => {
       return recipesState.recipes.find(r => {
-        return r.id === +id;
+        return r.id === +route.params.id;
       });
     })).subscribe(rcp => recipe = rcp);
     // @ts-ignore

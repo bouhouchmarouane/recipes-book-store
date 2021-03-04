@@ -21,13 +21,18 @@ export class DataStorageService {
     return this.http.put<[Recipe]>(this.url, recipes);
   }
 
-   getRecipes(): Observable<Recipe[]> {
+   getRecipes(): Observable<Recipe[] | null> {
       return this.http.get<Recipe[]>(this.url).pipe(map(recipes => {
-        return recipes.map(recipe => {
-          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
-        });
+        if (recipes != null) {
+          return recipes.map(recipe => {
+            return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
+          });
+        }
+        return null;
       }), tap(response => {
-        this.store.dispatch(new SetRecipes(response));
+        if (response !== null) {
+          this.store.dispatch(new SetRecipes(response));
+        }
       }));
   }
 }

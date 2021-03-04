@@ -17,11 +17,17 @@ export class RecipeEffects {
     switchMap(() => {
       return this.http.get<Recipe[]>(this.url);
     }), map(recipes => {
+      if (recipes === null) {
+        return [];
+      }
       return recipes.map(recipe => {
         return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
       });
     }), map(recipes => {
-      return new SetRecipes(recipes);
+      if (recipes !== null) {
+        return new SetRecipes(recipes);
+      }
+      return [];
     }));
 
   constructor(private actions$: Actions, private http: HttpClient, private store: Store<AppState>) {}
