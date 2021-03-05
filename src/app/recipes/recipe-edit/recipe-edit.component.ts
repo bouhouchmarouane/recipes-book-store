@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, UrlTree} from '@angular/router';
-import {RecipeService} from '../recipe.service';
 import {CanComponentDeactivate} from '../can-deactivate-recipe-guard.service';
 import {Observable, Subscription} from 'rxjs';
 import {Recipe} from '../recipe.model';
@@ -21,10 +20,7 @@ export class RecipeEditComponent implements OnInit, CanComponentDeactivate, OnDe
   submitted = false;
   private populateFormSub: Subscription;
 
-  constructor(private recipeService: RecipeService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private store: Store<AppState>) { }
+  constructor(private route: ActivatedRoute, private router: Router, private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.initForm();
