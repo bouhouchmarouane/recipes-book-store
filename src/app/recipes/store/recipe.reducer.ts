@@ -1,6 +1,6 @@
 import {Action, UPDATE} from '@ngrx/store';
 import {Recipe} from '../recipe.model';
-import {ADD_RECIPE, DELETE_RECIPE, SET_RECIPES, UPDATE_RECIPE} from './recipe.actions';
+import {ADD_RECIPE, DELETE_RECIPE, SET_RECIPES, STORE_RECIPES_DONE, UPDATE_RECIPE} from './recipe.actions';
 
 export interface State {
   recipes: Recipe[];
@@ -8,7 +8,7 @@ export interface State {
 
 const initialState: State = {
   recipes: []
-}
+};
 
 export function recipeReducer(state: State = initialState, action: any): State {
   let recipe: Recipe;
@@ -18,6 +18,8 @@ export function recipeReducer(state: State = initialState, action: any): State {
         ...state,
         recipes: [...action.payload]
       };
+    case STORE_RECIPES_DONE:
+      return state;
     case ADD_RECIPE:
       recipe = Object.assign({}, action.payload, {id: nextId(state)});
       return {

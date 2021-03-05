@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Recipe} from './recipe.model';
 import {Observable, of} from 'rxjs';
-import {RecipeService} from './recipe.service';
-import {DataStorageService} from '../shared/data-storage.service';
 import {Store} from '@ngrx/store';
 import {AppState} from '../store/app.reducer';
 import {map, switchMap, take} from 'rxjs/operators';
@@ -15,7 +13,7 @@ import {Actions, ofType} from '@ngrx/effects';
 })
 export class RecipesResolverService implements Resolve<Recipe[]> {
 
-  constructor(private dataStorageService: DataStorageService, private store: Store<AppState>, private action$: Actions) { }
+  constructor(private store: Store<AppState>, private action$: Actions) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     Observable<Recipe[]> | Promise<Recipe[]> | Recipe[] {
@@ -35,6 +33,5 @@ export class RecipesResolverService implements Resolve<Recipe[]> {
         }
       })
     );
-    // return this.dataStorageService.getRecipes();
   }
 }
