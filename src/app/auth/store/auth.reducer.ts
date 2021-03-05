@@ -35,14 +35,14 @@ export function authReducer(state: State = initialState, action: any): State {
         ...state,
         authError: null,
         loading: true
-      }
+      };
     case LOGIN_FAIL:
       return {
         ...state,
         user: null,
         authError: action.payload,
         loading: false
-      }
+      };
     case CLEAR_ERROR:
       return {
         ...state,

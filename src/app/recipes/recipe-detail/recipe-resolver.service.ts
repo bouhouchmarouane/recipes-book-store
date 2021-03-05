@@ -1,23 +1,27 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Recipe} from '../recipe.model';
 import {Observable} from 'rxjs';
-import {RecipeService} from '../recipe.service';
-import {DataStorageService} from '../../shared/data-storage.service';
+import {Store} from '@ngrx/store';
+import {AppState} from '../../store/app.reducer';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RecipeResolverService implements Resolve<Recipe> {
+export class RecipeResolverService implements Resolve<Recipe | undefined> {
 
-  constructor(private recipeService: RecipeService, private dataStorageService: DataStorageService) { }
+  constructor(private store: Store<AppState>) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Recipe> | Promise<Recipe> | Recipe {
-    const recipes = this.recipeService.recipes;
-    let recipe = this.recipeService.getRecipe(+route.params.id);
-    if (recipes.length === 0) {
-      this.dataStorageService.getRecipes().subscribe(() => recipe = this.recipeService.getRecipe(+route.params.id));
-    }
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
+    Observable<Recipe | undefined> | Promise<Recipe | undefined> | Recipe | undefined {
+    let recipe;
+    this.store.select('recipes').pipe(map(recipesState => {
+      return recipesState.recipes.find(r => {
+        return r.id === +route.params.id;
+      });
+    })).subscribe(rcp => recipe = rcp);
     return recipe;
   }
 }
+

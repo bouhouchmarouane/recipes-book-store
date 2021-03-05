@@ -44,7 +44,11 @@ export class AuthEffects {
   @Effect({dispatch: false})
   authSuccess = this.actions$.pipe(
     ofType(LOGIN_SUCCESS),
-    tap(() => this.router.navigate(['/']))
+    tap((loginSuccessAction: Login ) => {
+      if (loginSuccessAction.payload.redirect) {
+        this.router.navigate(['/']);
+      }
+    })
   );
 
   @Effect({dispatch: false})
@@ -52,8 +56,8 @@ export class AuthEffects {
     ofType(LOGOUT),
     tap(() => {
       localStorage.removeItem('userData');
-      this.router.navigate(['/auth']);
       this.authService.clearLogoutTimer();
+      this.router.navigate(['/auth']);
     })
   );
 
@@ -88,7 +92,7 @@ export class AuthEffects {
       let loadedUser;
 
       if (!localStorage.getItem('userData')) {
-        return {type: 'DUMMY'};
+        return {type: 'null'};
       }
       else {
         userData = JSON.parse(localStorage.getItem('userData') as string);
@@ -97,16 +101,16 @@ export class AuthEffects {
 
       if (loadedUser.token) {
         const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        this.authService.setLogoutTimer(expirationDuration * 1000);
+        this.authService.setLogoutTimer(expirationDuration);
         return new Login({
           email: userData.email,
           id: userData.id,
           token: userData._token,
-          expirationDate: new Date(userData._tokenExpirationDate)});
-        // const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
-        // this.autoLogout(expirationDuration);
+          expirationDate: new Date(userData._tokenExpirationDate),
+          redirect: false
+        });
       }
-      return {type: 'DUMMY'};
+      return {type: 'null'};
     })
   );
   constructor(private actions$: Actions, private http: HttpClient, private router: Router, private authService: AuthService) {}
@@ -120,7 +124,8 @@ const handleAuthentication = (resposeData: AuthResponseData) => {
     email: resposeData.email,
     id: resposeData.localId,
     token: resposeData.idToken,
-    expirationDate
+    expirationDate,
+    redirect: true
   });
 };
 const handleError = (errorResponse: HttpErrorResponse) => {

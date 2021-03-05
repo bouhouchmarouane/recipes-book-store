@@ -79,8 +79,6 @@ const setIdsToIngredients = (ingredients: Ingredient[], id: number) => {
 }
 
 function nextId(state: any): number {
-  console.log('nextId', state.ingredients);
-  // @ts-ignore
   let maxId = Math.max.apply(Math, state.ingredients.map((ing: Ingredient) => {
     return ing.id;
   }));
