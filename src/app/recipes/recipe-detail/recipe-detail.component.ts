@@ -1,9 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Recipe} from '../recipe.model';
-import {ShoppingListService} from '../../shopping-list/shopping-list.service';
 import {Ingredient} from '../../shared/ingredient.model';
 import {ActivatedRoute, Data, Router} from '@angular/router';
-import {RecipeService} from '../recipe.service';
+import {Store} from '@ngrx/store';
+import {AddIngredients} from '../../shopping-list/store/shopping-list.actions';
+import {AppState} from '../../store/app.reducer';
+import {DeleteRecipe} from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -13,27 +15,25 @@ import {RecipeService} from '../recipe.service';
 export class RecipeDetailComponent implements OnInit {
   recipe: Recipe;
 
-  constructor(private shoppingListService: ShoppingListService,
-              private route: ActivatedRoute,
-              private recipeService: RecipeService,
-              private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router, private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.route.data.subscribe((data: Data) => {
       this.recipe = data.recipe;
+      if (this.recipe === undefined) {
+        this.router.navigate(['../']);
+      }
     });
   }
 
   AddIngredientsToShoppinglist(ingredients: Ingredient[]): void {
-    ingredients.map((ingredient) =>
-      this.shoppingListService.addEditIngredient(ingredient)
-     );
+    this.store.dispatch(new AddIngredients(ingredients));
   }
 
   deleteRecipe(): void {
-    const id = this.route.snapshot.params.id;
-    const deleted = this.recipeService.deleteRecipe(+id);
-    if (deleted) {
+    if (confirm('Are you sure to delete this recipe ?')) {
+      const id = this.route.snapshot.params.id;
+      this.store.dispatch(new DeleteRecipe(id));
       this.router.navigate(['../']);
     }
   }

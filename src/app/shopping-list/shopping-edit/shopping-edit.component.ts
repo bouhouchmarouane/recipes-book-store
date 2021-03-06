@@ -1,8 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Ingredient} from '../../shared/ingredient.model';
-import {ShoppingListService} from '../shopping-list.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
+import {Store} from '@ngrx/store';
+import {AddIngredient, DeleteIngredients, StopEdit, UpdateIngredients} from '../store/shopping-list.actions';
+import {AppState} from '../../store/app.reducer';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -15,7 +17,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   editMode = false;
   idIngredient: number;
 
-  constructor(private shoppingListService: ShoppingListService) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit(): void {
     this.ingredientForm = new FormGroup({
@@ -23,9 +25,15 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
       amount: new FormControl(null, [Validators.required, Validators.pattern('^(-)?[0-9]*$'), Validators.min(1)])
     });
 
-    this.editIngSub = this.shoppingListService.editingIngredientSub.subscribe(idIng => {
-      if (idIng !== null) {
-        this.editIngredient(idIng);
+    this.editIngSub = this.store.select('shoppingList').subscribe(stateData => {
+      this.idIngredient = stateData.editedIngredientId;
+      const ingredient = stateData.editedIngredient;
+      if (ingredient) {
+        this.ingredientForm.setValue({
+          name: ingredient.name,
+          amount: ingredient.amount
+        });
+        this.editMode = true;
       }
     });
   }
@@ -33,33 +41,30 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   addSaveIngredient(): void {
     const name = this.ingredientForm.get('name')?.value;
     const amount = this.ingredientForm.get('amount')?.value;
-    this.shoppingListService.addEditIngredient(new Ingredient(this.editMode ? this.idIngredient : null, name, amount as number));
-    this.resetForm();
-  }
 
-  editIngredient(idIng: number): void {
-    this.idIngredient = idIng;
-    const ingredient = this.shoppingListService.findIngredientById(idIng);
-    this.ingredientForm.setValue({
-      name: ingredient.name,
-      amount: ingredient.amount
-    });
-    this.editMode = true;
+    const ingredient = new Ingredient(this.editMode ? this.idIngredient : null, name, amount as number);
+    if (this.editMode) {
+      this.store.dispatch(new UpdateIngredients(ingredient));
+    } else {
+      this.store.dispatch(new AddIngredient(ingredient));
+    }
+    this.resetForm();
   }
 
   ngOnDestroy(): void {
     this.editIngSub.unsubscribe();
+    this.store.dispatch(new StopEdit());
   }
 
   resetForm(): void {
     this.ingredientForm.reset();
     this.editMode = false;
-    this.shoppingListService.editingIngredientSub.next(null);
+    this.store.dispatch(new StopEdit());
   }
 
   deleteIngredient(): void {
     if (confirm('Are you sure to delete this ingredient ? ')) {
-      this.shoppingListService.deleteIngredient(this.idIngredient);
+      this.store.dispatch(new DeleteIngredients());
     }
     this.resetForm();
   }
